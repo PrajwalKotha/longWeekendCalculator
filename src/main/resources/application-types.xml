@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="input" format="json">
+      <types:shape format="weave" example="examples/payloadForlogestweekend.json"><![CDATA[%dw 2.0
+
+type input = {|
+  calendar: String, 
+  year: Number {"typeId": "int"}, 
+  holidays: Array<{|    name: String,     startDate: String,     endDate: String  |}>
+|} {"example": "{\\\"calendar\\\":\\\"United States Holiday Calendar\\\",\\\"year\\\":2019,\\\"holidays\\\":[{\\\"name\\\":\\\"New Year's Day\\\",\\\"startDate\\\":\\\"2019-01-01\\\",\\\"endDate\\\":\\\"2019-01-02\\\"},{\\\"name\\\":\\\"Martin Luther King Jr's Birthday\\\",\\\"startDate\\\":\\\"2019-01-21\\\",\\\"endDate\\\":\\\"2019-01-21\\\"},{\\\"name\\\":\\\"Memorial Day\\\",\\\"startDate\\\":\\\"2019-05-27\\\",\\\"endDate\\\":\\\"2019-05-27\\\"},{\\\"name\\\":\\\"Summer Shutdown\\\",\\\"startDate\\\":\\\"2019-07-01\\\",\\\"endDate\\\":\\\"2019-07-01\\\"},{\\\"name\\\":\\\"Summer Shutdown\\\",\\\"startDate\\\":\\\"2019-07-02\\\",\\\"endDate\\\":\\\"2019-07-02\\\"},{\\\"name\\\":\\\"Summer Shutdown\\\",\\\"startDate\\\":\\\"2019-07-03\\\",\\\"endDate\\\":\\\"2019-07-03\\\"},{\\\"name\\\":\\\"Independence Day\\\",\\\"startDate\\\":\\\"2019-07-04\\\",\\\"endDate\\\":\\\"2019-07-04\\\"},{\\\"name\\\":\\\"Summer Shutdown\\\",\\\"startDate\\\":\\\"2019-07-05\\\",\\\"endDate\\\":\\\"2019-07-05\\\"},{\\\"name\\\":\\\"Labor Day\\\",\\\"startDate\\\":\\\"2019-09-02\\\",\\\"endDate\\\":\\\"2019-09-02\\\"},{\\\"name\\\":\\\"Thanksgiving Day\\\",\\\"startDate\\\":\\\"2019-11-28\\\",\\\"endDate\\\":\\\"2019-11-28\\\"},{\\\"name\\\":\\\"Day after Thanksgiving\\\",\\\"startDate\\\":\\\"2019-11-29\\\",\\\"endDate\\\":\\\"2019-11-29\\\"},{\\\"name\\\":\\\"Winter Shutdown\\\",\\\"startDate\\\":\\\"2019-12-23\\\",\\\"endDate\\\":\\\"2019-12-23\\\"},{\\\"name\\\":\\\"Winter Shutdown\\\",\\\"startDate\\\":\\\"2019-12-24\\\",\\\"endDate\\\":\\\"2019-12-24\\\"},{\\\"name\\\":\\\"Christmas Day\\\",\\\"startDate\\\":\\\"2019-12-25\\\",\\\"endDate\\\":\\\"2019-12-25\\\"},{\\\"name\\\":\\\"Winter Shutdown\\\",\\\"startDate\\\":\\\"2019-12-26\\\",\\\"endDate\\\":\\\"2019-12-26\\\"},{\\\"name\\\":\\\"Winter Shutdown\\\",\\\"startDate\\\":\\\"2019-12-27\\\",\\\"endDate\\\":\\\"2019-12-27\\\"},{\\\"name\\\":\\\"Winter Shutdown\\\",\\\"startDate\\\":\\\"2019-12-30\\\",\\\"endDate\\\":\\\"2019-12-30\\\"},{\\\"name\\\":\\\"Winter Shutdown\\\",\\\"startDate\\\":\\\"2019-12-31\\\",\\\"endDate\\\":\\\"2019-12-31\\\"}]}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#2702d6b7-fee3-4357-98b3-740e6abc0062">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="input"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
