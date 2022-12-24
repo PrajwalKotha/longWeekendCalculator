@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="cc93561a-4235-4383-be5b-9cea6c1747f9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="logestholidaysFlow" doc:id="a480b6f3-a86d-47af-956e-9082d6622a39" >
+		<http:listener doc:name="Listener" doc:id="2f895eca-4df7-404a-949c-1b75b6fd2420" config-ref="HTTP_Listener_config" path="/getLongHoliday/year/{year}/length/{length}"/>
+		<set-variable value="#[attributes.uriParams.year as Number]" doc:name="Set Variable" doc:id="fa4214e7-cc03-4017-88e0-a74f4cb6f85f" variableName="year"/>
+		<ee:transform doc:name="Transform Message" doc:id="4b07217a-3e92-4c78-8f63-d7131c4a336a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output application/json
+---
+if ( isEmpty(payload) ) {
+	"calendar": "United States Holiday Calendar",
+	"year": 2019,
+	"holidays": [{
+		"name": "New Year's Day",
+		"startDate": "2019-01-01",
+		"endDate": "2019-01-02"
+	},
+    {
+		"name": "Martin Luther King Jr's Birthday",
+		"startDate": "2019-01-21",
+		"endDate": "2019-01-21"
+	},
+    {
+		"name": "Memorial Day",
+		"startDate": "2019-05-27",
+		"endDate": "2019-05-27"
+	},
+    {
+		"name": "Summer Shutdown",
+		"startDate": "2019-07-01",
+		"endDate": "2019-07-01"
+	},
+    {
+		"name": "Summer Shutdown",
+		"startDate": "2019-07-02",
+		"endDate": "2019-07-02"
+	},
+    {
+		"name": "Summer Shutdown",
+		"startDate": "2019-07-03",
+		"endDate": "2019-07-03"
+	},
+    {
+		"name": "Independence Day",
+		"startDate": "2019-07-04",
+		"endDate": "2019-07-04"
+	},
+    {
+		"name": "Summer Shutdown",
+		"startDate": "2019-07-05",
+		"endDate": "2019-07-05"
+	},
+    {
+		"name": "Labor Day",
+		"startDate": "2019-09-02",
+		"endDate": "2019-09-02"
+	},
+    {
+		"name": "Thanksgiving Day",
+		"startDate": "2019-11-28",
+		"endDate": "2019-11-28"
+	},
+    {
+		"name": "Day after Thanksgiving",
+		"startDate": "2019-11-29",
+		"endDate": "2019-11-29"
+	},
+    {
+		"name": "Winter Shutdown",
+		"startDate": "2019-12-23",
+		"endDate": "2019-12-23"
+	},
+    {
+		"name": "Winter Shutdown",
+		"startDate": "2019-12-24",
+		"endDate": "2019-12-24"
+	},
+    {
+		"name": "Christmas Day",
+		"startDate": "2019-12-25",
+		"endDate": "2019-12-25"
+	},
+    {
+		"name": "Winter Shutdown",
+		"startDate": "2019-12-26",
+		"endDate": "2019-12-26"
+	},
+    {
+		"name": "Winter Shutdown",
+		"startDate": "2019-12-27",
+		"endDate": "2019-12-27"
+	},
+    {
+		"name": "Winter Shutdown",
+		"startDate": "2019-12-30",
+		"endDate": "2019-12-30"
+	},
+    {
+		"name": "Winter Shutdown",
+		"startDate": "2019-12-31",
+		"endDate": "2019-12-31"
+	}]
+} else payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="details" ><![CDATA[output application/json
+var date = if(isEmpty(payload)) "2019-01-01" else (vars.year ++ "01-01")
+---
+{
+	"weekends": ((((0 to 365) map (value, index) -> ((date as Date) + ("P$(value)D" as Period))) map {
+		date: $,
+		day: $ as String {
+			format: "E"
+		}
+	}) filter $.day ~= "Sat" or $.day ~= "Sun").date
+}]]></ee:set-variable>
+				<ee:set-variable variableName="consecutive_days" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.uriParams.length as Number]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="2702d6b7-fee3-4357-98b3-740e6abc0062" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var holidays = flatten((payload.holidays map {
+	Date: if ( ($.endDate as Date - $.startDate as Date) as Number / 86400 > 0 ) (0 to (($.endDate as Date - $.startDate as Date) as Number / 86400) map (key, index) -> {
+		"name": $.name,
+		"Date": (($.startDate as Date) + ("P$((key) as Number)D" as Period)),
+		Day: (($.startDate as Date) + ("P$((key) as Number)D" as Period)) as String {
+			format: "E"
+		}
+	})
+    else
+      {
+		"name": $.name,
+		"Date": $.startDate,
+		Day: ($.startDate as Date) as String {
+			format: "E"
+		}
+	}
+}).Date)
+var weekends = vars.details.weekends map {
+	name: 'Weekend' ++ " " ++ ($ as Date as String {
+		format: "E"
+	}),
+	Date: $,
+	Day: $ as Date as String {
+		format: "E"
+	}
+}
+var finalReq = ((holidays ++ weekends) orderBy ((item, index) -> item.Date as Date)) groupBy ((item, index) -> item.Date) pluck (($)[0])
+output application/json
+---
+(((((((finalReq map (key, index) -> {
+	(key.Date): (0 to vars.consecutive_days) map (key1, index1) -> {
+		(finalReq filter $.Date ~= key.Date + ("P$((key1) as Number)D" as Period))
+	}
+}) map {
+	($ mapObject ((value, key, index) -> {
+		(key): (value[0 to indexOf(value, {
+		})]) filter $ != {
+		},
+		consecutiveDays: indexOf(value, {
+		})
+	}))
+}) filter $.consecutiveDays >= 3)) orderBy ((value, key) -> value.consecutiveDays))[-1 to 0]) groupBy ((item, index) -> item.consecutiveDays))[0]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c24996be-c9c6-4b3b-b63f-9a7dc0d3ce7b" message="#[payload]"/>
+	</flow>
+</mule>
