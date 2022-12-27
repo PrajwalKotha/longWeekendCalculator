@@ -1,9 +1,9 @@
 # longWeekendCalculator
 ### By providing the year,number of consecuitve days as input and list of holidays (in Body), it will give you the longest possible weekend based on the weekends in that year and the consecuitve holidys you are looking for.
 
-### Default year is : 2019 .
+### Default year is : 2023 .
 
-#### Sample URL : http://longestweekend.us-e2.cloudhub.io/getLongHoliday/year/2023/length/10
+#### Sample URL : http://longestweekend.us-e2.cloudhub.io/getLongWeekend/holidays/3/optionals/0/year/2023
 
 #### Sample Request Payload Body: 
 
