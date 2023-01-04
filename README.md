@@ -3,7 +3,7 @@
 
 ### Default year is : 2023 .
 
-#### Sample URL : http://longestweekend.us-e2.cloudhub.io/getLongWeekend/holidays/3/optionals/0/year/2023
+#### Sample URL : https://longweekend.us-e2.cloudhub.io/getLongWeekend/holidays/3/optionals/0/year/2023
 
 #### Sample Request Payload Body: 
 
